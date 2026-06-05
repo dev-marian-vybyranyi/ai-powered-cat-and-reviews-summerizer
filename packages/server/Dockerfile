@@ -1,13 +1,13 @@
-FROM oven/bun:1.1-alpine AS base
+FROM oven/bun:1.1 AS base
 WORKDIR /usr/src/app
 
 COPY package.json ./
 
-RUN bun install
+RUN NODE_ENV=development bun install
 
 COPY . .
 
-RUN bun prisma generate
+RUN DATABASE_URL=postgresql://dummy:dummy@localhost:5432/dummy bun prisma generate
 
 EXPOSE 3000
 
