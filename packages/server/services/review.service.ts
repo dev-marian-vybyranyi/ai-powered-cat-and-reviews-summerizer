@@ -1,23 +1,41 @@
+import fs from 'fs';
+import path from 'path';
+import { conversationRepository } from '../repositories/conversation.repository';
+import template from '../llm/prompts/chatbot.txt';
 import { llmClient } from '../llm/client';
-import template from '../prompts/summarize-reviews.txt';
-import { reviewRepository } from '../repositories/review.repository';
 
-export const reviewService = {
-   async summarizeReviews(productId: number): Promise<string> {
-      const existingSummary =
-         await reviewRepository.getReviewSummary(productId);
-      if (existingSummary) {
-         return existingSummary;
-      }
+const parkInfo = fs.readFileSync(
+   path.join(__dirname, '..', 'llm', 'prompts', 'WonderWorld.md'),
+   'utf-8'
+);
+const instructions = template.replace('{{parkInfo}}', parkInfo);
 
-      const reviews = await reviewRepository.getReviews(productId, 10);
-      const joinedReviews = reviews.map((r) => r.content).join('\n\n');
-      const prompt = template.replace('{{reviews}}', joinedReviews);
+type ChatResponse = {
+   id: string;
+   message: string;
+};
 
-      const summary = await llmClient.summarize(joinedReviews);
+// Public interface
+export const chatService = {
+   async sendMessage(
+      prompt: string,
+      conversationId: string
+   ): Promise<ChatResponse> {
+      const response = await llmClient.generateText({
+         model: 'gpt-4o-mini',
+         instructions,
+         prompt,
+         temperature: 0.2,
+         maxTokens: 200,
+         previousResponseId:
+            conversationRepository.getLastResponseId(conversationId),
+      });
 
-      await reviewRepository.storeReviewSummary(productId, summary);
+      conversationRepository.setLastResponseId(conversationId, response.id);
 
-      return summary;
+      return {
+         id: response.id,
+         message: response.text,
+      };
    },
 };
