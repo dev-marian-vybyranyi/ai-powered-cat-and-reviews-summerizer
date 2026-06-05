@@ -1,11 +1,7 @@
-import ReviewList from './components/reviews/ReviewList';
+import Layout from './components/Layout';
 
 function App() {
-   return (
-      <div className="p-4 h-screen w-full">
-         <ReviewList productId={4} />
-      </div>
-   );
+   return <Layout />;
 }
 
 export default App;
