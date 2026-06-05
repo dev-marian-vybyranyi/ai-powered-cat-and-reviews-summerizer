@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://ai-powered-cat-and-reviews-summerizer.onrender.com"
+      "destination": "https://ai-powered-cat-and-reviews-summerizer.onrender.com/api/:path*"
     },
     {
       "source": "/((?!assets|favicon.ico|api).*)",

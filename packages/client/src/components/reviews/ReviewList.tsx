@@ -39,7 +39,7 @@ const ReviewList = ({ productId }: Props) => {
       );
    }
 
-   if (!reviewsQuery.data?.reviews.length) {
+   if (!reviewsQuery.data?.reviews?.length) {
       return null;
    }
 
