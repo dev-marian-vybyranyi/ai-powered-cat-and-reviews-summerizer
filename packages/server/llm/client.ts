@@ -50,8 +50,8 @@ export const llmClient = {
    },
 
    async summarizeReviews(reviews: string) {
-      const response = await ollamaClient.chat({
-         model: 'tinyllama',
+      const response = await openAIClient.chat.completions.create({
+         model: 'gpt-4o-mini',
          messages: [
             {
                role: 'system',
@@ -64,6 +64,6 @@ export const llmClient = {
          ],
       });
 
-      return response.message.content;
+      return response.choices[0]?.message.content || '';
    },
 };
